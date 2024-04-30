@@ -1,0 +1,13 @@
+
+class_path: main_data_module.MainDataModule
+init_args:
+  batch_size: 2
+  
+  test_datasets:
+    - class_path: datasets.matterport360_dataset.Matterport360Dataset
+      init_args: 
+        dataset_path: .
+        scene_list_path: datasets/matterport_split/scenes_test.txt
+        #gpu_transforms:
+        #  class_path: data_processing.sample_transforms.AddDistanceFromDepth
+

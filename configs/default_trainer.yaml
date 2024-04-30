@@ -1,0 +1,15 @@
+precision: 16
+max_epochs:
+devices: auto
+benchmark: True
+max_epochs: 100
+strategy:
+  class_path: DDPStrategy
+callbacks:
+  - class_path: ModelCheckpoint
+    init_args:
+      save_top_k: 1
+      monitor: val_loss_monitor_0
+      mode: min
+      verbose: True
+      save_last: True

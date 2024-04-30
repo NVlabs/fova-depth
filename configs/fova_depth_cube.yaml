@@ -1,0 +1,22 @@
+class_path: base_model.MainModel
+init_args:
+  network: 
+    class_path: models.cube.fova_depth_cube.FOVADepthCube
+    init_args:
+      add_feature_mixing: True
+  criterion: 
+    class_path: models.shared.criterion.Criterion
+  image_logger: 
+    class_path: models.shared.image_logger.ImageLogger
+    init_args:
+        log_freq: 1000 
+        val_log_freq: 30
+        cube_mode: True
+        distance_min_max: [0 , 10]
+  test_metrics_processor:
+    class_path: models.shared.test_metric_processor.TestMetricProcessor
+  optimizer_config: 
+    init_lr: 0.0001
+    mile_stones: [20, 40]
+    gamma: 0.5
+  step_log_freq: 100

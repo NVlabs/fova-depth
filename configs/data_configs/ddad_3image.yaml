@@ -1,0 +1,43 @@
+
+class_path: main_data_module.MainDataModule
+init_args:
+  batch_size: 2
+  train_dataset: 
+    class_path: datasets.ddad_temporal.DDADTemporalDataset
+    init_args: 
+      dataset_path: .
+      scene_nums: range(0,150)
+      mode: 'nominal_distance_context'
+      num_forward_context: 1
+      num_backward_context: 1
+      nominal_forward_context_distance: 1
+      forward_look_ahead: 5
+      nominal_backward_context_distance: 1
+      backward_look_ahead: 5
+      gpu_transforms:
+        class_path: data_processing.sample_transforms.SequentialFromList
+        init_args:
+          module_list: 
+            - class_path: data_processing.sample_transforms.ColorJitterBatch
+            - class_path: data_processing.sample_transforms.AddDistanceFromDepth
+            - class_path: data_processing.sample_transforms.RandomCropFlip
+              init_args:
+                crop_scale_range: [0.75, 1.0]
+                flip_probability: 0.5
+                keys: ['image', 'distance']
+                interp_modes: ['bilinear','nearest']
+  
+  val_datasets:
+    - class_path: datasets.ddad_temporal.DDADTemporalDataset
+      init_args: 
+        dataset_path: .
+        scene_nums: range(150,200)
+        mode: 'nominal_distance_context'
+        num_forward_context: 1
+        num_backward_context: 1
+        nominal_forward_context_distance: 1
+        forward_look_ahead: 5
+        nominal_backward_context_distance: 1
+        backward_look_ahead: 5
+        gpu_transforms:
+          class_path: data_processing.sample_transforms.AddDistanceFromDepth

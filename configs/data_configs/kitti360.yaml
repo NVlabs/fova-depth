@@ -1,0 +1,18 @@
+
+class_path: main_data_module.MainDataModule
+init_args:
+  batch_size: 2
+  test_datasets: 
+    - class_path: datasets.kitti360_temporal.Kitti360TemporalDataset
+      init_args: 
+        dataset_path: .
+        scene_name: .
+        image_num: image_02
+        mode: 'nominal_distance_context'
+        num_forward_context: 1
+        num_backward_context: 0
+        nominal_forward_context_distance: 1
+        forward_look_ahead: 5
+        nominal_backward_context_distance: 1
+        backward_look_ahead: 5
+  

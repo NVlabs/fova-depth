@@ -1,0 +1,31 @@
+
+class_path: main_data_module.MainDataModule
+init_args:
+  batch_size: 4
+  train_dataset: 
+    class_path: datasets.scannet_dataset.ScanNetDataset 
+    init_args: 
+      dataset_path: .
+      train_val: train
+      init_resize: [240, 320]
+      gpu_transforms:
+        class_path: data_processing.sample_transforms.SequentialFromList
+        init_args:
+          module_list: 
+            - class_path: data_processing.sample_transforms.ColorJitterBatch
+            - class_path: data_processing.sample_transforms.AddDistanceFromDepth
+            - class_path: data_processing.sample_transforms.RandomCropFlip
+              init_args:
+                crop_scale_range: [0.75, 1.0]
+                flip_probability: 0.5
+                keys: ['image', 'distance']
+                interp_modes: ['bilinear','nearest']
+  
+  val_datasets:
+    - class_path: datasets.scannet_dataset.ScanNetDataset 
+      init_args: 
+        dataset_path: .
+        train_val: val
+        init_resize: [240, 320]
+        gpu_transforms:
+          class_path: data_processing.sample_transforms.AddDistanceFromDepth
