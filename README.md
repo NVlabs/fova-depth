@@ -19,7 +19,7 @@ Please checkout the project page: [https://research.nvidia.com/labs/lpr/fova-dep
 
 ## Installation
 
-This project depends on Pytorch, Pytorch-Lightning, and our library [nvTorchCam]()
+This project depends on Pytorch, Pytorch-Lightning, and our library [nvTorchCam](https://github.com/NVlabs/nvTorchCam)
 
 To install in a virtual environment run:
 
@@ -29,19 +29,19 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Then pip install nvTorchCam in this environment.
+Then install nvTorchCam following its instructions within this environment.
 
 ## Download Pretrained Checkpoints
 
 Download the pretrained checkpoints from [here]() and place them in the checkpoints folder. They should be:
 
 checkpoints  
-├──&nbsp;cube_ddad_2image.ckpt  
-├──&nbsp;cube_ddad_3image.ckpt  
-├──&nbsp;cube_scannet.ckpt  
-├──&nbsp;erp_ddad_2image.ckpt  
-├──&nbsp;erp_ddad_3image.ckpt  
-└──&nbsp;erp_scannet.ckpt
+├── cube_ddad_2image.ckpt  
+├── cube_ddad_3image.ckpt  
+├── cube_scannet.ckpt  
+├── erp_ddad_2image.ckpt  
+├── erp_ddad_3image.ckpt  
+└── erp_scannet.ckpt
 
 
 ## Downloading Datasets
@@ -55,18 +55,18 @@ Due to the unavailability of the original Scannet dataset version used in our wo
 Additionally, you will need to download new_orders and train-test splits from Normal-Assisted-Stereo, which we provide [here](). 
 
 Once prepared the folder structure should look as follows:
-
+```
 scannet  
 │  
-├──&nbsp;train  
-├──&nbsp;val  
-└──&nbsp;new_orders  
-&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;train  
-&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;val  
-
+├── train  
+├── val  
+└── new_orders  
+    ├── train  
+    └── val  
+```
 ### DDAD
 
-Dowload the DDAD dataset (train+val 257GB) from here https://github.com/TRI-ML/DDAD. Install the TRI Dataset Governance Policy (DGP) codebase. as explained on the same page.
+Dowload the DDAD dataset (train+val 257GB) from here https://github.com/TRI-ML/DDAD. Install the TRI Dataset Governance Policy (DGP) codebase as explained on the same page.
 
 Then export the depth maps and resize the images by running the following script from the root of this repository:
 
@@ -76,46 +76,46 @@ python data_processing/resize_ddad.py --ddad_path path_to_ddad --resized_ddad_pa
 This make take several hours.
 
 Once prepared the folder structure should look as follows:
-
+```
 ddad_resize  
-├──&nbsp;000000  
-&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;calibration  
-&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;depth  
-&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;rgb  
-&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;scene_*.json  
-├──&nbsp;000001  
-├──&nbsp;...
-└──&nbsp;000199
-
+├── 000000  
+    ├── calibration  
+    ├── depth  
+    ├── rgb  
+    └── scene_*.json  
+├── 000001  
+├── ...
+└── 000199
+```
 
 ### Matterport 360
 
 Matterport360 can be download from here: https://researchdata.bath.ac.uk/1126/ as seven .zip files.
 
 Once prepared the folder structure should look as follows:
-
+```
 data  
-├──&nbsp; 1LXtFkjw3qL  
-├──&nbsp; 1pXnuDYAj8r  
-└──&nbsp;...
-
+├──  1LXtFkjw3qL  
+├──  1pXnuDYAj8r  
+└── ...
+```
 ### KITTI360
 
 Kitti360 can be downloaded here: https://www.cvlibs.net/datasets/kitti-360/ 
 You will need the fisheye images, Calibrations, and Vehicle poses. After extracting it should look as follows:
-
+```
 KITTI-360  
-├──&nbsp;calibration  
-&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;&lt;drive_name&gt;  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;image_02  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;image_03  
-├──&nbsp;data_2d_raw  
-&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;calib_cam_to_pose.txt  
-├──&nbsp;data_poses  
-&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;&lt;drive_name&gt;  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;cam0_to_world.txt  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;poses.txt  
-
+├── calibration  
+    ├──  <drive_name>  
+        ├── image_02  
+        └── image_03  
+├── data_2d_raw  
+    └── calib_cam_to_pose.txt  
+├── data_poses  
+    ├──  <drive_name>  
+        ├── cam0_to_world.txt  
+        └── poses.txt  
+```
 Where `<drive_name>` will be something like `2013_05_28_drive_0007_sync` for example. 
 
 ## Running the Code
@@ -126,19 +126,19 @@ This project is based on Pytorch-Lighting and is thus highly configurable from t
 
 Here we list the commands for testing our pretrained models on Matterport360 and KITTI360.
 
-#### Evaluate ERP model on Matterport360
+* ERP model on Matterport360
 
 ```bash
 python train.py test --data configs/data_configs/matterport360.yaml --model configs/fova_depth_erp.yaml --model.init_args.network.init_args.warp_to_original_cam True --trainer.default_root_dir test_logs/matterport360_erp --model.init_args.load_state_dict checkpoints/erp_scannet.ckpt --data.init_args.test_datasets.init_args.dataset_path <path_to_matterport360_dataset>
 ```
 
-#### Eval Cube model on Matterport360
+* Cube model on Matterport360
 
 ```bash
 python train.py test --data configs/data_configs/matterport360.yaml --model configs/fova_depth_cube.yaml --model.init_args.network.init_args.warp_to_original_cam True --trainer.default_root_dir test_logs/matterport360_cube --model.init_args.load_state_dict checkpoints/cube_scannet.ckpt --data.init_args.test_datasets.init_args.dataset_path <path_to_matterport360_dataset>
 ```
 
-#### Evaluate two image ERP model on KITTI360
+* 2-image ERP model on KITTI360
 
 ```bash
 python train.py test --data configs/data_configs/kitti360.yaml --model configs/fova_depth_erp_highres.yaml --model.init_args.load_state_dict checkpoints/erp_ddad_2image.ckpt --trainer.default_root_dir test_logs/kitti360_erp --data.init_args.test_datasets.init_args.dataset_path <path_to_kitti360_dataset> --data.init_args.test_datasets.init_args.scene_name <kitti360_scene_name>
@@ -146,19 +146,19 @@ python train.py test --data configs/data_configs/kitti360.yaml --model configs/f
 
 This saves the data in the canonical representation. It is possible to warp the depth back to the original fisheye representation by adding the following arguments:  `--model.init_args.network.init_args.warp_to_original_cam True` and `--trainer.inference_mode False`. However these will slow down inference due to iterative undistortion.
 
-#### Evaluate two image Cubemap model on KITTI360
+* 2-image Cubemap model on KITTI360
 
 ```bash
 python train.py test --data configs/data_configs/kitti360.yaml --model configs/fova_depth_cube_highres.yaml --model.init_args.load_state_dict checkpoints/cube_ddad_2image.ckpt --trainer.default_root_dir test_logs/kitti360_cube --data.init_args.test_datasets.init_args.dataset_path <path_to_kitti360_dataset> --data.init_args.test_datasets.init_args.scene_name <kitti360_scene_name>
 ```
 
-#### Evaluate three image ERP model on KITTI360
+* 3-image ERP model on KITTI360
 
 ```bash
 python train.py test --data configs/data_configs/kitti360_3image.yaml --model configs/fova_depth_erp_highres.yaml --model.init_args.load_state_dict checkpoints/erp_ddad_3image.ckpt --trainer.default_root_dir test_logs/kitti360_erp_3image --data.init_args.test_datasets.init_args.dataset_path <path_to_kitti360_dataset> --data.init_args.test_datasets.init_args.scene_name <kitti360_scene_name>
 ```
 
-#### Evaluate three image Cube model on KITTI360
+* 3-image Cube model on KITTI360
 
 ```bash
 python train.py test --data configs/data_configs/kitti360_3image.yaml --model configs/fova_depth_cube_highres.yaml --model.init_args.load_state_dict checkpoints/cube_ddad_3image.ckpt --trainer.default_root_dir test_logs/kitti360_cube_3image --data.init_args.test_datasets.init_args.dataset_path <path_to_kitti360_dataset> --data.init_args.test_datasets.init_args.scene_name <kitti360_scene_name>
@@ -168,37 +168,37 @@ python train.py test --data configs/data_configs/kitti360_3image.yaml --model co
 
 All models were trained on 8 NVIDIA V100 GPUs with 32GB of memory. Batch-sizes and learning rates may need to be adjusted when training on different hardware. Here are the commands to train the models.
 
-#### Train ERP scannet
+* ERP model on ScanNet
 
 ```bash
 python train.py fit --data configs/data_configs/scannet.yaml --model configs/fova_depth_erp.yaml --trainer configs/default_trainer.yaml --trainer.default_root_dir train_logs/erp_scannet --data.init_args.train_dataset.init_args.dataset_path <path_to_scannet_dataset> --data.init_args.val_datasets.init_args.dataset_path <path_to_scannet_dataset>
 ```
 
-#### Train Cube Scannet
+* Cube model on ScanNet
 
 ```bash
 python train.py fit --data configs/data_configs/scannet.yaml --model configs/fova_depth_cube.yaml --trainer configs/default_trainer.yaml --trainer.default_root_dir train_logs/cube_scannet --data.init_args.train_dataset.init_args.dataset_path <path_to_scannet_dataset> --data.init_args.val_datasets.init_args.dataset_path <path_to_scannet_dataset>
 ```
 
-#### Train ERP DDAD two image
+* ERP model on DDAD (2 input images)
 
 ```bash
 python train.py fit --data configs/data_configs/ddad.yaml --model configs/fova_depth_erp_highres.yaml --trainer configs/default_trainer.yaml --trainer.default_root_dir train_logs/erp_ddad --model.init_args.load_state_dict checkpoints/erp_scannet.ckpt --trainer.max_epochs 40 --data.init_args.train_dataset.init_args.dataset_path <path_to_ddad_dataset> --data.init_args.val_datasets.init_args.dataset_path <path_to_ddad_dataset>
 ```
 
-#### Cube ddad two image
+* Cube model on DDAD (2 input images)
 
 ```bash
 python train.py fit --data configs/data_configs/ddad.yaml --model configs/fova_depth_cube_highres.yaml --trainer configs/default_trainer.yaml --trainer.default_root_dir train_logs/cube_ddad --model.init_args.load_state_dict checkpoints/cube_scannet.ckpt -trainer.max_epochs 40 --data.init_args.train_dataset.init_args.dataset_path <path_to_ddad_dataset> --data.init_args.val_datasets.init_args.dataset_path <path_to_ddad_dataset>
 ```
 
-#### Train ERP DDAD three image
+* ERP model on DDAD (3 input images)
 
 ```bash
 python train.py fit --data configs/data_configs/ddad_3image.yaml --model configs/fova_depth_erp_highres.yaml --trainer configs/default_trainer.yaml --trainer.default_root_dir train_logs/erp_ddad_3image --model.init_args.load_state_dict checkpoints/erp_ddad_2image.ckpt --trainer.max_epochs 40 --model.init_args.optimizer_config.init_lr 0.00002 --data.init_args.train_dataset.init_args.dataset_path <path_to_ddad_dataset> --data.init_args.val_datasets.init_args.dataset_path <path_to_ddad_dataset>
 ```
 
-#### Cube ddad three image
+* Cube model on DDAD (3 input images)
 
 ```bash
 python train.py fit --data configs/data_configs/ddad_3image.yaml --model configs/fova_depth_cube_highres.yaml --trainer configs/default_trainer.yaml --trainer.default_root_dir train_logs/cube_ddad_3image --model.init_args.load_state_dict checkpoints/cube_ddad_2image.ckpt --trainer.max_epochs 40 --model.init_args.optimizer_config.init_lr 0.00002 -data.init_args.train_dataset.init_args.dataset_path <path_to_ddad_dataset> --data.init_args.val_datasets.init_args.dataset_path <path_to_ddad_dataset>
@@ -206,7 +206,7 @@ python train.py fit --data configs/data_configs/ddad_3image.yaml --model configs
 
 ## Testing (New) Datasets
 
-We include some facilities for testing new datasets one might want to implement. For example running
+We include some facilities for testing new datasets one might want to implement. For example, running
 
 ```bash
 python datasets/test_dataset.py --data configs/data_configs/matterport360.yaml --type_to_test test --sample_number 25 --canon_type erp --data.init_args.test_datasets.init_args.dataset_path  <path_to_matterport_dataset>
