@@ -7,7 +7,7 @@ from torch import Tensor
 from torchvision._internally_replaced_utils import load_state_dict_from_url
 from torchvision.utils import _log_api_usage_once
 
-from models.cube.cube_conv import SparseCubeConv2d,  SparseCubeMaxPool2d, TakeFirstLayer
+from models.cube.cube_conv import SparseCubeConv2d, SparseCubeMaxPool2d, TakeFirstLayer
 
 __all__ = [
     "ResNet",
@@ -36,7 +36,7 @@ model_urls = {
 }
 
 
-#def conv3x3(in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, dilation: int = 1) -> nn.Conv2d:
+# def conv3x3(in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, dilation: int = 1) -> nn.Conv2d:
 #    """3x3 convolution with padding"""
 #    return nn.Conv2d(
 #        in_planes,
@@ -49,13 +49,26 @@ model_urls = {
 #        dilation=dilation,
 #    )
 
-def conv3x3(in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, dilation: int = 1) -> SparseCubeConv2d:
-    return SparseCubeConv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=dilation,groups=groups, bias=False, dilation=dilation)
+
+def conv3x3(
+    in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, dilation: int = 1
+) -> SparseCubeConv2d:
+    return SparseCubeConv2d(
+        in_planes,
+        out_planes,
+        kernel_size=3,
+        stride=stride,
+        padding=dilation,
+        groups=groups,
+        bias=False,
+        dilation=dilation,
+    )
 
 
-#def conv1x1(in_planes: int, out_planes: int, stride: int = 1) -> nn.Conv2d:
+# def conv1x1(in_planes: int, out_planes: int, stride: int = 1) -> nn.Conv2d:
 #    """1x1 convolution"""
 #    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
+
 
 def conv1x1(in_planes: int, out_planes: int, stride: int = 1) -> SparseCubeConv2d:
     return SparseCubeConv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
@@ -91,7 +104,7 @@ class BasicBlock(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    #(k,c,w,w)
+    # (k,c,w,w)
     def forward(self, args) -> Tensor:
         x, to_process, batch_size = args
         identity = x
@@ -201,16 +214,24 @@ class ResNet(nn.Module):
             )
         self.groups = groups
         self.base_width = width_per_group
-        self.conv1 = SparseCubeConv2d(3, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = SparseCubeConv2d(
+            3, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False
+        )
         self.bn1 = norm_layer(self.inplanes)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = SparseCubeMaxPool2d(kernel_size=3, stride=2, padding=1)
         self.layer1 = self._make_layer(block, 64, layers[0])
-        self.layer2 = self._make_layer(block, 128, layers[1], stride=2, dilate=replace_stride_with_dilation[0])
-        self.layer3 = self._make_layer(block, 256, layers[2], stride=2, dilate=replace_stride_with_dilation[1])
-        self.layer4 = self._make_layer(block, 512, layers[3], stride=2, dilate=replace_stride_with_dilation[2])
-        #self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        #self.fc = nn.Linear(512 * block.expansion, num_classes)
+        self.layer2 = self._make_layer(
+            block, 128, layers[1], stride=2, dilate=replace_stride_with_dilation[0]
+        )
+        self.layer3 = self._make_layer(
+            block, 256, layers[2], stride=2, dilate=replace_stride_with_dilation[1]
+        )
+        self.layer4 = self._make_layer(
+            block, 512, layers[3], stride=2, dilate=replace_stride_with_dilation[2]
+        )
+        # self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        # self.fc = nn.Linear(512 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -253,7 +274,14 @@ class ResNet(nn.Module):
         layers = []
         layers.append(
             block(
-                self.inplanes, planes, stride, downsample, self.groups, self.base_width, previous_dilation, norm_layer
+                self.inplanes,
+                planes,
+                stride,
+                downsample,
+                self.groups,
+                self.base_width,
+                previous_dilation,
+                norm_layer,
             )
         )
         self.inplanes = planes * block.expansion
@@ -268,28 +296,25 @@ class ResNet(nn.Module):
                     norm_layer=norm_layer,
                 )
             )
-        
+
         return nn.Sequential(*layers)
 
     def _forward_impl(self, args) -> Tensor:
         x, to_process, batch_size = args
         # See note [TorchScript super()]
-        x = self.conv1( (x, to_process, batch_size))[0]
+        x = self.conv1((x, to_process, batch_size))[0]
         x = self.bn1(x)
         x = self.relu(x)
-        x = self.maxpool( (x, to_process, batch_size))
-        
+        x = self.maxpool((x, to_process, batch_size))
+
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
-       
 
-        
-
-        #x = self.avgpool(x)
-        #x = torch.flatten(x, 1)
-        #x = self.fc(x)
+        # x = self.avgpool(x)
+        # x = torch.flatten(x, 1)
+        # x = self.fc(x)
 
         return x
 
@@ -307,30 +332,30 @@ def _resnet(
 ) -> ResNet:
     model = ResNet(block, layers, **kwargs)
     if pretrained:
-        print('loading pretrained resnet')
+        print("loading pretrained resnet")
         original_sd = load_state_dict_from_url(model_urls[arch], progress=progress)
         cube_res_keys = model.state_dict().keys()
-        
+
         new_state_dict = {}
         for k in original_sd.keys():
-            if k in ['fc.weight', 'fc.bias']:
+            if k in ["fc.weight", "fc.bias"]:
                 continue
             if k in cube_res_keys:
                 new_state_dict[k] = original_sd[k]
             else:
-                tokens = k.split('.')
-                if tokens[-2][:4] == 'conv':
-                    tokens.insert(-1,'conv')
-                elif tokens[-3] == 'downsample':
-                    if tokens[-2] == '1':
-                        tokens[-2] = '2'
+                tokens = k.split(".")
+                if tokens[-2][:4] == "conv":
+                    tokens.insert(-1, "conv")
+                elif tokens[-3] == "downsample":
+                    if tokens[-2] == "1":
+                        tokens[-2] = "2"
                     else:
-                        tokens.insert(-1,'conv')
+                        tokens.insert(-1, "conv")
                 else:
                     print(tokens)
-                new_k = '.'.join(tokens)
+                new_k = ".".join(tokens)
                 new_state_dict[new_k] = original_sd[k]
-        
+
         model.load_state_dict(new_state_dict)
     return model
 
@@ -449,25 +474,25 @@ def wide_resnet101_2(pretrained: bool = False, progress: bool = True, **kwargs: 
     kwargs["width_per_group"] = 64 * 2
     return _resnet("wide_resnet101_2", Bottleneck, [3, 4, 23, 3], pretrained, progress, **kwargs)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import torchvision.models as models
     import time
-    device = 'cuda'
+
+    device = "cuda"
     net = resnet50(pretrained=True).to(device)
-    
-    #print(net)
- 
-    x = torch.randn(5,3,512,512,device=device)
-    to_process =torch.tensor([0,1,6,7,8]).to(device)
+
+    # print(net)
+
+    x = torch.randn(5, 3, 512, 512, device=device)
+    to_process = torch.tensor([0, 1, 6, 7, 8]).to(device)
     batch_size = 2
     t = time.time()
     net((x, to_process, batch_size))
     torch.cuda.synchronize()
-    print('time', time.time()-t)
-    x = torch.randn(5,3,512,512,device=device)
+    print("time", time.time() - t)
+    x = torch.randn(5, 3, 512, 512, device=device)
     t = time.time()
     net((x, to_process, batch_size))
     torch.cuda.synchronize()
-    print('time', time.time()-t)
-
-
+    print("time", time.time() - t)

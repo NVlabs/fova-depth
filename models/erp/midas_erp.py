@@ -4,9 +4,10 @@ import torch.nn.functional as F
 from models.erp.erp_conv import ERPConv2d
 from models.erp.resnet_erp import erp_resnet_34
 
+
 class ResidualConvUnit(nn.Module):
-    """Residual convolution module.
-    """
+    """Residual convolution module."""
+
     def __init__(self, features):
         """Init.
         Args:
@@ -14,16 +15,11 @@ class ResidualConvUnit(nn.Module):
         """
         super().__init__()
 
-        self.conv1 =  ERPConv2d(
-            features, features, kernel_size=3, stride=1, padding=1, bias=True
-        )
+        self.conv1 = ERPConv2d(features, features, kernel_size=3, stride=1, padding=1, bias=True)
 
-        self.conv2 =  ERPConv2d(
-            features, features, kernel_size=3, stride=1, padding=1, bias=False
-        )
+        self.conv2 = ERPConv2d(features, features, kernel_size=3, stride=1, padding=1, bias=False)
 
         self.relu = nn.ReLU(inplace=True)
-       
 
     def forward(self, x):
         out = self.relu(x)
@@ -33,11 +29,8 @@ class ResidualConvUnit(nn.Module):
         return out + x
 
 
-
-
 class FeatureFusionBlock(nn.Module):
-    """Feature fusion block.
-    """
+    """Feature fusion block."""
 
     def __init__(self, features):
         """Init.
@@ -48,7 +41,7 @@ class FeatureFusionBlock(nn.Module):
 
         self.resConfUnit = ResidualConvUnit(features)
 
-    def forward(self,x, res=None ):
+    def forward(self, x, res=None):
         """Forward pass.
         Returns:
             tensor: output
@@ -67,12 +60,11 @@ class MidasERPFeatureExtractor(nn.Module):
     def __init__(self, pretrained=False, input_ch=3):
         super().__init__()
         resnet = erp_resnet_34(pretrained=pretrained)
-       
+
         if input_ch == 3:
             self.resnet_conv1 = resnet.conv1
         else:
             self.resnet_conv1 = ERPConv2d(input_ch, 64, 7, stride=2, bias=False, padding=3)
-
 
         self.resnet_bn1 = resnet.bn1
         self.resnet_relu = resnet.relu
@@ -80,14 +72,12 @@ class MidasERPFeatureExtractor(nn.Module):
 
         self.layer1 = resnet.layer1
         self.layer2 = resnet.layer2
-        self.layer3 = resnet.layer3 
+        self.layer3 = resnet.layer3
         self.layer4 = resnet.layer4
-      
- 
-    
+
     def forward(self, erps):
-     
-        x = self.resnet_conv1( erps)
+
+        x = self.resnet_conv1(erps)
         x = self.resnet_bn1(x)
         x = self.resnet_relu(x)
         x = self.resnet_maxpool(x)
@@ -96,10 +86,8 @@ class MidasERPFeatureExtractor(nn.Module):
         layer2 = self.layer2(layer1)
         layer3 = self.layer3(layer2)
         layer4 = self.layer4(layer3)
-       
+
         return layer1, layer2, layer3, layer4
-
-
 
 
 class OutputConv(nn.Module):
@@ -108,13 +96,13 @@ class OutputConv(nn.Module):
 
         self.conv1 = ERPConv2d(features, 128, kernel_size=3, stride=1, padding=1)
         self.conv2 = ERPConv2d(128, 1, kernel_size=3, stride=1, padding=1)
-       
 
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
-        x = nn.functional.interpolate(x,scale_factor=2,mode='bilinear')
+        x = nn.functional.interpolate(x, scale_factor=2, mode="bilinear")
         return x
+
 
 class OutputConvNew(nn.Module):
     def __init__(self, features):
@@ -122,31 +110,35 @@ class OutputConvNew(nn.Module):
 
         self.conv1 = ERPConv2d(features, 128, kernel_size=3, stride=1, padding=1)
         self.conv2 = ERPConv2d(128, 32, kernel_size=3, stride=1, padding=1)
-        self.conv3 = ERPConv2d(32,1, kernel_size=3, stride=1, padding=1)
-        
+        self.conv3 = ERPConv2d(32, 1, kernel_size=3, stride=1, padding=1)
 
     def forward(self, x):
         x = self.conv1(x)
         x = nn.functional.relu(x)
         x = self.conv2(x)
         x = nn.functional.relu(x)
-        x = nn.functional.interpolate(x,scale_factor=2,mode='bilinear')
+        x = nn.functional.interpolate(x, scale_factor=2, mode="bilinear")
         x = self.conv3(x)
         return x
 
 
-        
-
 class ERPMidasNet(nn.Module):
-   
-    def __init__(self, features=256, out_ch=1, pretrained=True, input_ch=3, model='resnet34', use_new_output=False):
+
+    def __init__(
+        self,
+        features=256,
+        out_ch=1,
+        pretrained=True,
+        input_ch=3,
+        model="resnet34",
+        use_new_output=False,
+    ):
         super().__init__()
 
-        if model == 'resnet34':
-            layer_out_channels=[64,128,256,512]
+        if model == "resnet34":
+            layer_out_channels = [64, 128, 256, 512]
         else:
-            raise RuntimeError('Cube Midas feature extractor resnet name not recognized', model)
-        
+            raise RuntimeError("Cube Midas feature extractor resnet name not recognized", model)
 
         self.pretrained = MidasERPFeatureExtractor(pretrained=pretrained, input_ch=input_ch)
 
@@ -155,21 +147,28 @@ class ERPMidasNet(nn.Module):
         self.refinenet2 = FeatureFusionBlock(features)
         self.refinenet1 = FeatureFusionBlock(features)
 
-        self.layer1_rn = ERPConv2d(layer_out_channels[0], features, kernel_size=3, stride=1, padding=1, bias=False)
-        self.layer2_rn = ERPConv2d(layer_out_channels[1], features, kernel_size=3, stride=1, padding=1, bias=False)
-        self.layer3_rn = ERPConv2d(layer_out_channels[2], features, kernel_size=3, stride=1, padding=1, bias=False)
-        self.layer4_rn = ERPConv2d(layer_out_channels[3], features, kernel_size=3, stride=1, padding=1, bias=False)
+        self.layer1_rn = ERPConv2d(
+            layer_out_channels[0], features, kernel_size=3, stride=1, padding=1, bias=False
+        )
+        self.layer2_rn = ERPConv2d(
+            layer_out_channels[1], features, kernel_size=3, stride=1, padding=1, bias=False
+        )
+        self.layer3_rn = ERPConv2d(
+            layer_out_channels[2], features, kernel_size=3, stride=1, padding=1, bias=False
+        )
+        self.layer4_rn = ERPConv2d(
+            layer_out_channels[3], features, kernel_size=3, stride=1, padding=1, bias=False
+        )
 
         if use_new_output:
             self.output_conv = OutputConvNew(features)
         else:
             self.output_conv = OutputConv(features)
 
-
     def forward(self, erps):
-       
+
         layer_1, layer_2, layer_3, layer_4 = self.pretrained(erps)
-        
+
         layer_1_rn = self.layer1_rn(layer_1)
         layer_2_rn = self.layer2_rn(layer_2)
         layer_3_rn = self.layer3_rn(layer_3)
