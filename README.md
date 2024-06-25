@@ -2,9 +2,10 @@
 
 # FoVA-Depth
 
-This is the official code release for the paper **FoVA-Depth: Field-of-View Agnostic Depth Estimation for Cross-Dataset Generalization** by Daniel Lichy, Hang Su, Abhishek Badki, Jan Kautz, and Orazio Gallo.
+This is the official code release for the paper  
+Daniel Lichy, Hang Su, Abhishek Badki, Jan Kautz, and Orazio Gallo, **FoVA-Depth: Field-of-View Agnostic Depth Estimation for Cross-Dataset Generalization**, 3DV 2024.
 
-Please checkout the project page: [https://research.nvidia.com/labs/lpr/fova-depth/](https://research.nvidia.com/labs/lpr/fova-depth/)
+Please check out the project page: [https://research.nvidia.com/labs/lpr/fova-depth/](https://research.nvidia.com/labs/lpr/fova-depth/)
 
 ## Table of Contents
 1. [Installation](#installation)
@@ -21,6 +22,8 @@ Please checkout the project page: [https://research.nvidia.com/labs/lpr/fova-dep
 
 This project depends on Pytorch, Pytorch-Lightning, and our library [nvTorchCam](https://github.com/NVlabs/nvTorchCam)
 
+To clone the nvTorchCam submodule, use the ```--recurse-submodules``` option when cloning this repo, and follow its installation instructions within this environment.
+
 To install in a virtual environment run:
 
 ```bash
@@ -29,7 +32,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Then install nvTorchCam following its instructions within this environment.
+Install [nvdiffrast](https://nvlabs.github.io/nvdiffrast), though this is only strictly needed to interpolate when using cube maps.
 
 ## Download Pretrained Checkpoints
 
