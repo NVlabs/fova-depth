@@ -1,0 +1,3 @@
+[submodule "nvTorchCam"]
+	path = nvTorchCam
+	url = git@github.com:NVlabs/nvTorchCam.git
