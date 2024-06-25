@@ -20,9 +20,9 @@ Please check out the project page: [https://research.nvidia.com/labs/lpr/fova-de
 
 ## Installation
 
-This project depends on Pytorch, Pytorch-Lightning, and our library [nvTorchCam](https://github.com/NVlabs/nvTorchCam)
+This project depends on Pytorch, Pytorch-Lightning, and our library [nvTorchCam](https://github.com/NVlabs/nvTorchCam).
 
-To clone the nvTorchCam submodule, use the ```--recurse-submodules``` option when cloning this repo, and follow its installation instructions within this environment.
+To clone the nvTorchCam submodule, use the ```--recurse-submodules``` option when cloning this repo.
 
 To install in a virtual environment run:
 
