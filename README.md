@@ -7,6 +7,8 @@ Daniel Lichy, Hang Su, Abhishek Badki, Jan Kautz, and Orazio Gallo, **FoVA-Depth
 
 Please check out the project page: [https://research.nvidia.com/labs/lpr/fova-depth/](https://research.nvidia.com/labs/lpr/fova-depth/)
 
+:point_right: :point_right: Also take a look at [nvTorchCam](https://github.com/NVlabs/nvTorchCam), which implements plane-sweep volumes (PSV) and related concepts, such as sphere-sweep volumes or epipolar attention, in a way that is agnostic to the camera projection model (e.g., pinhole or fisheye). 
+
 ## Table of Contents
 1. [Installation](#installation)
 2. [Downloading Pretrained Checkpoints](#download-pretrained-checkpoints)
