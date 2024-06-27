@@ -38,7 +38,7 @@ Install [nvdiffrast](https://nvlabs.github.io/nvdiffrast), though this is only s
 
 ## Download Pretrained Checkpoints
 
-Download the pretrained checkpoints from [here]() and place them in the checkpoints folder. They should be:
+Download the pretrained checkpoints from [here](https://drive.google.com/drive/folders/1xfOQ2ChxwkAIw_IkjTOkS-fmtUTFHM24) and place them in the checkpoints folder. They should be:
 
 checkpoints  
 ├── cube_ddad_2image.ckpt  
@@ -57,9 +57,9 @@ Our models are trained on two pinhole datasets, Scannet (indoor) and DDAD (drivi
 
 Due to the unavailability of the original Scannet dataset version used in our work (prepared by the authors of [Normal-Assisted-Stereo](https://github.com/udaykusupati/Normal-Assisted-Stereo/tree/master?tab=readme-ov-file)), we recommend following the alternative setup provided in [this repository](https://github.com/tberriel/RayPatchQuerying/tree/main). This setup closely mimics the structure required by Normal-Assisted-Stereo.
 
-Additionally, you will need to download new_orders and train-test splits from Normal-Assisted-Stereo, which we provide [here](). 
+Additionally, you will need to download new_orders and train-test splits from Normal-Assisted-Stereo, which we provide [here](https://drive.google.com/file/d/1AbreXQIzQFT9JI4u9Olhdb3ihEhoehn7). 
 
-Once prepared the folder structure should look as follows:
+After unzipping, the folder structure should look as follows:
 ```
 scannet  
 │  
@@ -67,11 +67,11 @@ scannet
 ├── val  
 └── new_orders  
     ├── train  
-    └── val  
+    └── test  
 ```
 ### DDAD
 
-Dowload the DDAD dataset (train+val 257GB) from here https://github.com/TRI-ML/DDAD. Install the TRI Dataset Governance Policy (DGP) codebase as explained on the same page.
+Download the DDAD dataset (train+val 257GB) from here https://github.com/TRI-ML/DDAD. Install the TRI Dataset Governance Policy (DGP) codebase as explained on the same page.
 
 Then export the depth maps and resize the images by running the following script from the root of this repository:
 
@@ -220,7 +220,7 @@ python datasets/test_dataset.py --data configs/data_configs/matterport360.yaml -
 will save the 25th sample from the Matterport training dataset to the `test_dataset_output` folder. The sample contains the original images and unprojected distance maps in world coordinates, saved in PLY format for visualization in MeshLab or similar tools to ensure alignment (i.e. you loaded all coordinate systems correctly). It also exports images warped to `--canon_type=erp` and the corresponding unprojected canonical distances in PLY. Additionally, the script saves the reference image rectified alongside each source image in ERP format, where corresponding features are vertically aligned, aiding in pose verification without needing ground truth distance.
 
 ## Citation
-
+If you find this code useful, please consider citing:
 ```bibtex
 @inproceedings{lichy2024fova,
   title     = {{FoVA-Depth}: {F}ield-of-View Agnostic Depth Estimation for Cross-Dataset Generalization},
