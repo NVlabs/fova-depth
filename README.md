@@ -57,7 +57,7 @@ Our models are trained on two pinhole datasets, Scannet (indoor) and DDAD (drivi
 
 Due to the unavailability of the original Scannet dataset version used in our work (prepared by the authors of [Normal-Assisted-Stereo](https://github.com/udaykusupati/Normal-Assisted-Stereo/tree/master?tab=readme-ov-file)), we recommend following the alternative setup provided in [this repository](https://github.com/tberriel/RayPatchQuerying/tree/main). This setup closely mimics the structure required by Normal-Assisted-Stereo.
 
-Additionally, you will need to download new_orders and train-test splits from Normal-Assisted-Stereo, which we provide [here](https://drive.google.com/file/d/1AbreXQIzQFT9JI4u9Olhdb3ihEhoehn7). 
+Additionally, you will need to download new_orders, which contains the train-test splits from Normal-Assisted-Stereo, from [here](https://drive.google.com/drive/folders/1s_O35noRjSR2Qn1i88VQJpn6xjltOEsg). 
 
 After unzipping, the folder structure should look as follows:
 ```
