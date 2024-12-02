@@ -38,7 +38,7 @@ Install [nvdiffrast](https://nvlabs.github.io/nvdiffrast), though this is only s
 
 ## Download Pretrained Checkpoints
 
-Download the pretrained checkpoints from [here](https://drive.google.com/drive/folders/1xfOQ2ChxwkAIw_IkjTOkS-fmtUTFHM24) and place them in the checkpoints folder. They should be:
+Download the pretrained checkpoints from [here](https://drive.google.com/drive/folders/1q9D2yZZy3CPSd133YZD2lOyEH27qpEYt) and place them in the checkpoints folder. They should be:
 
 checkpoints  
 ├── cube_ddad_2image.ckpt  
